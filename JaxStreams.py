@@ -699,7 +699,7 @@ class HernquistPotential(Potential):
     """
     Hernquist potential. Same as Gala's https://gala.adrian.pw/en/latest/_modules/gala/potential/potential/builtin/core.html#HernquistPotential
     """
-    def __init__(self, m, a, b, c, Omega, units=None):
+    def __init__(self, m, c, units=None):
         super().__init__(units, {'m': m, 'c': c})
     
     @partial(jax.jit,static_argnums=(0,))
