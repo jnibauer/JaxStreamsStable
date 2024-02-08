@@ -139,7 +139,7 @@ class Potential:
         rtol: float = 1e-7 #1e-7
         atol: float = 1e-7 #1e-7
         dt0=0.1
-        stepsize_controller = PIDController(rtol=rtol, atol=atol, dtmin=0.01, force_dtmin=True) #dtmin 0.01
+        stepsize_controller = PIDController(rtol=rtol, atol=atol, dtmin=0.5, force_dtmin=True) #dtmin 0.01
         max_steps: int = 16**4 #was 16**5
         t0 = t0#0.0
         t1 = t1#4000.
@@ -693,6 +693,20 @@ class BarPotential(Potential):
         pot_corot_frame = (self._G*self.m/(2.0*self.a))*jnp.log( (xyz_corot[0] - self.a + T_minus)/(xyz_corot[0] + self.a + T_plus) )
         return pot_corot_frame
     
+    
+    
+class HernquistPotential(Potential):
+    """
+    Hernquist potential. Same as Gala's https://gala.adrian.pw/en/latest/_modules/gala/potential/potential/builtin/core.html#HernquistPotential
+    """
+    def __init__(self, m, a, b, c, Omega, units=None):
+        super().__init__(units, {'m': m, 'c': c})
+    
+    @partial(jax.jit,static_argnums=(0,))
+    def potential(self,xyz,t):
+        r = jnp.sqrt(jnp.sum(xyz**2))
+        pot = -self._G*self.m/(r+self.c)
+        
     
 class Potential_Combine(Potential):
     def __init__(self, potential_list, units=None):
